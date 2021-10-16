@@ -8,7 +8,7 @@ public class Main {
         String[] tokens = lexicalAnalyzer(stmt);
         // no valid statement can be created with less than 3 tokens
         if (tokens.length > 3) {
-            System.out.println("Lexemes: "+Arrays.toString(tokens));
+            System.out.println("Lexemes: " + Arrays.toString(tokens));
             syntaxAnalyzer(tokens);
         } else System.out.println("Invalid statement");
     }
@@ -18,24 +18,22 @@ public class Main {
     //[System.out.print, (, "string", +, varname, ), ;]
     public static String[] lexicalAnalyzer(String stmt) {
         StringBuilder sb = new StringBuilder(stmt);
-        boolean withinString =false;
+        boolean withinString = false;
         boolean isSpecial = false;
         for (int i = 0; i < sb.length(); i++) {
-            if (sb.charAt(i) == '"' && (sb.charAt(i-1) != '\\'| isSpecial)){
+            if (sb.charAt(i) == '"' && (sb.charAt(i - 1) != '\\' | isSpecial)) {
                 withinString = !withinString;
-            }else if (sb.charAt(i) == '\\' && withinString && !isSpecial) {
-                if (sb.charAt(i+1) == '\\') {
+            } else if (sb.charAt(i) == '\\' && withinString && !isSpecial) {
+                if (sb.charAt(i + 1) == '\\') {
                     isSpecial = true;
                     i++;
                 }
-            }
-            else if (!withinString &&(sb.charAt(i) == '=' | sb.charAt(i) == '(' |
+            } else if (!withinString && (sb.charAt(i) == '=' | sb.charAt(i) == '(' |
                     sb.charAt(i) == ')' | sb.charAt(i) == ';')) {
                 sb.insert(i, " ");
                 sb.insert(i + 2, " ");
                 i += 2;
-            }
-            else isSpecial = false;
+            } else isSpecial = false;
         }
         stmt = sb.toString();
         return stmt.split("\\s+");
@@ -52,9 +50,9 @@ public class Main {
                 if (variableChecker(tokens[1]).equals("valid")) {
                     tokens[1] = "<var>";
                     if (scannerChecker(tokens).equals("valid")) {
-                        result =("Valid Statement");
-                    } else result =(scannerChecker(tokens));
-                } else result =(variableChecker(tokens[1]));
+                        result = ("Valid Statement");
+                    } else result = (scannerChecker(tokens));
+                } else result = (variableChecker(tokens[1]));
             } else if (start.equals("System.out.print")) {
                 for (int i = 2; i < tokens.length - 2; i++) {
                     if (variableChecker(tokens[i]).equals("valid")) {
@@ -62,22 +60,22 @@ public class Main {
                     } else if (tokens[i].startsWith("\"") && tokens[i].endsWith("\"")) {
                         tokens[i] = "<string>";
                     } else if (!tokens[i].equals("+")) {
-                        result =(variableChecker(tokens[i]));
+                        result = (variableChecker(tokens[i]));
                         break;
                     }
                 }
-                result =(outputChecker(tokens));
+                result = (outputChecker(tokens));
             } else if (variableChecker(start).equals("valid")) {
                 tokens[0] = "<var>";
                 String temp2 = tokens[2].split("\\.")[0];
                 if (variableChecker(temp2).equals("valid")) {
                     tokens[2] = "<var>." + tokens[2].split("\\.")[1];
-                    result =(inputChecker(tokens));
-                } else result =(variableChecker(temp2));
-            } else result =("invalid Statement");
+                    result = (inputChecker(tokens));
+                } else result = (variableChecker(temp2));
+            } else result = ("invalid Statement");
 
         } catch (Exception e) {
-            result =("invalid statement");
+            result = ("invalid statement");
         }
         System.out.println(result);
     }
