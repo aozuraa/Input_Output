@@ -1,6 +1,7 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+../out
 # Datasource local storage ignored files
 /../../../../../../:\Users\Oracle\IdeaProjects\Input_Output\.idea/dataSources/
 /dataSources.local.xml
