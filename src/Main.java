@@ -3,10 +3,14 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
+        System.out.print("enter input: ");
         String stmt = input.nextLine();
         String[] tokens = lexicalAnalyzer(stmt);
-        System.out.println(Arrays.toString(tokens));
-        syntaxAnalyzer(tokens);
+        // no valid statement can be created with less than 3 tokens
+        if (tokens.length > 3) {
+            System.out.println("Lexemes: "+Arrays.toString(tokens));
+            syntaxAnalyzer(tokens);
+        } else System.out.println("Invalid statement stop at begin");
     }
 
     //break down string into lexemes
@@ -28,43 +32,43 @@ public class Main {
 
     //choose which syntax checker based on the 1st element in the array
     public static void syntaxAnalyzer(String[] s) {
-        ArrayList<String> resultList = new ArrayList<>();
+        String result;
         String[] tokens = s.clone();
         String start = tokens[0];
 
-        if (start.equals("Scanner")){
-            if (variableChecker(tokens[1]).equals("valid")){
-                tokens[1] = "<var>";
-                if (scannerChecker(tokens).equals("valid")){
-                    resultList.add("Valid Statement"+1);
-                }else resultList.add(scannerChecker(tokens)+2);
-            } else resultList.add(variableChecker(tokens[1])+3);
-        }
-        else  if (start.equals("System.out.print")){
-            for (int i = 2; i < tokens.length-2;i++) {
-                if (variableChecker(tokens[i]).equals("valid")){
-                    tokens[i] = "<var>";
-                }else if (tokens[i].startsWith("\"")&&tokens[i].endsWith("\"")){
-                    tokens[i] = "<string>";
+        try {
+            if (start.equals("Scanner")) {
+                if (variableChecker(tokens[1]).equals("valid")) {
+                    tokens[1] = "<var>";
+                    if (scannerChecker(tokens).equals("valid")) {
+                        result =("Valid Statement");
+                    } else result =(scannerChecker(tokens));
+                } else result =(variableChecker(tokens[1]));
+            } else if (start.equals("System.out.print")) {
+                for (int i = 2; i < tokens.length - 2; i++) {
+                    if (variableChecker(tokens[i]).equals("valid")) {
+                        tokens[i] = "<var>";
+                    } else if (tokens[i].startsWith("\"") && tokens[i].endsWith("\"")) {
+                        tokens[i] = "<string>";
+                    } else if (!tokens[i].equals("+")) {
+                        result =(variableChecker(tokens[i]));
+                        break;
+                    }
                 }
-                else if (!tokens[i].equals("+")){
-                    System.out.println(tokens[i]);
-                    resultList.add(variableChecker(tokens[i])+4);
-                    break;
-                }
-            }
-            resultList.add(outputChecker(tokens)+5);
+                result =(outputChecker(tokens));
+            } else if (variableChecker(start).equals("valid")) {
+                tokens[0] = "<var>";
+                String temp2 = tokens[2].split("\\.")[0];
+                if (variableChecker(temp2).equals("valid")) {
+                    tokens[2] = "<var>." + tokens[2].split("\\.")[1];
+                    result =(inputChecker(tokens));
+                } else result =(variableChecker(temp2));
+            } else result =("invalid Statement");
+
+        } catch (Exception e) {
+            result =("invalid statement");
         }
-        else if (variableChecker(start).equals("valid")){
-            tokens[0] = "<var>";
-            String temp2 =tokens[2].split("\\.")[0];
-            if (variableChecker(temp2).equals("valid")){
-                tokens[2] = "<var>."+ tokens[2].split("\\.")[1];
-                resultList.add(inputChecker(tokens)+6);
-            } else  resultList.add(variableChecker(temp2)+7);
-        }
-        else resultList.add("invalid Statement"+8);
-        System.out.println(resultList.toString());
+        System.out.println(result);
     }
 
     //Check the syntax of the <scanner>
@@ -105,14 +109,15 @@ public class Main {
     //Check the syntax of the <input_statement>
     public static String inputChecker(String[] s) {
         String[] validInit = new String[]{"<var>", "=", "<var>.nextX", "(", ")", ";"};
-        String[] dataTypes = new String[]{"nextInt","nextFloat","nextBoolean","next","nextByte","nextDouble","nextShort","nextLong"};
+        String[] dataTypes = new String[]{"nextInt", "nextFloat", "nextBoolean", "next", "nextByte", "nextDouble", "nextShort", "nextLong"};
+        String[] validInitForChar = new String[]{"<var>", "=", "<var>.nextX", "(", ")", ".charAt", "(", "0", ")", ";"};
         String[] tempArray = s.clone();
         tempArray[2] = "<var>.nextX";
-        if (Arrays.equals(tempArray, validInit)) {
-            if (Arrays.asList(dataTypes).contains(s[2].split("\\.")[1])) {
+        if (Arrays.asList(dataTypes).contains(s[2].split("\\.")[1])) {
+            if (Arrays.equals(tempArray, validInit) | Arrays.equals(tempArray, validInitForChar)) {
                 return "valid";
-            }else  return "invalid datatype of scanner";
-        } else return "invalid syntax";
+            } else return "invalid syntax";
+        } else return "invalid datatype of scanner";
     }
 
     //Check if the given variable name is valid.
