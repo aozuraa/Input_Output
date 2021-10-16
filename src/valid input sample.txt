@@ -1,0 +1,12 @@
+Scanner variable = new Scanner(System.in);
+variable = variable.nextInt();
+variable = variable.nextFloat();
+variable = variable.nextBoolean();
+variable = variable.next();
+variable = variable.nextByte();
+variable = variable.nextDouble(); 
+variable = variable.nextShort();
+variable = variable.nextLong();
+System.out.print("string" + variable);
+System.out.print(variable);
+System.out.print(variable + "string");
