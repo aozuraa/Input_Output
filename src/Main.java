@@ -10,7 +10,7 @@ public class Main {
         if (tokens.length > 3) {
             System.out.println("Lexemes: "+Arrays.toString(tokens));
             syntaxAnalyzer(tokens);
-        } else System.out.println("Invalid statement stop at begin");
+        } else System.out.println("Invalid statement");
     }
 
     //break down string into lexemes
@@ -18,13 +18,24 @@ public class Main {
     //[System.out.print, (, "string", +, varname, ), ;]
     public static String[] lexicalAnalyzer(String stmt) {
         StringBuilder sb = new StringBuilder(stmt);
+        boolean withinString =false;
+        boolean isSpecial = false;
         for (int i = 0; i < sb.length(); i++) {
-            if (sb.charAt(i) == '=' | sb.charAt(i) == '(' |
-                    sb.charAt(i) == ')' | sb.charAt(i) == ';' | sb.charAt(i) == '\'') {
+            if (sb.charAt(i) == '"' && (sb.charAt(i-1) != '\\'| isSpecial)){
+                withinString = !withinString;
+            }else if (sb.charAt(i) == '\\' && withinString && !isSpecial) {
+                if (sb.charAt(i+1) == '\\') {
+                    isSpecial = true;
+                    i++;
+                }
+            }
+            else if (!withinString &&(sb.charAt(i) == '=' | sb.charAt(i) == '(' |
+                    sb.charAt(i) == ')' | sb.charAt(i) == ';')) {
                 sb.insert(i, " ");
                 sb.insert(i + 2, " ");
                 i += 2;
             }
+            else isSpecial = false;
         }
         stmt = sb.toString();
         return stmt.split("\\s+");
