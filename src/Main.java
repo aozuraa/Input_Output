@@ -49,9 +49,7 @@ public class Main {
             if (start.equals("Scanner")) {
                 if (variableChecker(tokens[1]).equals("valid")) {
                     tokens[1] = "<var>";
-                    if (scannerChecker(tokens).equals("valid")) {
-                        result = ("Valid Statement");
-                    } else result = (scannerChecker(tokens));
+                    result = scannerChecker(tokens);
                 } else result = (variableChecker(tokens[1]));
             } else if (start.equals("System.out.print")) {
                 for (int i = 2; i < tokens.length - 2; i++) {
@@ -83,9 +81,28 @@ public class Main {
     //Check the syntax of the <scanner>
     public static String scannerChecker(String[] s) {
         String[] validInit = new String[]{"Scanner", "<var>", "=", "new", "Scanner", "(", "System.in", ")", ";"};
+        String[] sizedS = new String[9];
+        int j = 0;
+        for (int i = 0; i < sizedS.length; i++) {
+            sizedS[i] = " ";
+        }
+        for (int i = 0; i < s.length; i++) {
+            sizedS[i] = s[i];
+        }
+        ArrayList<String> invalidSyntax = new ArrayList<String>(10);
         if (Arrays.equals(s, validInit)) {
             return "valid";
-        } else return "invalid something"; //needs to be changed
+        } else {
+            for (int i = 0; i < validInit.length; i++) {
+                if (sizedS[i - j].equals(validInit[i])) {
+                } else {
+                    invalidSyntax.add(validInit[i]);
+                    j++;
+                }
+            }
+
+            return "Invalid Syntax: Missing " + invalidSyntax.toString(); //needs to be changed
+        }
     }
 
     //Check the syntax of the <output_statement>
